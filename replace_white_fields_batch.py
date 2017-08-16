@@ -5,16 +5,21 @@ import glob
 import os
 
 # ================================================
+folder = 'data_raw_1x'
 source_file = 'flat_fields_tiltfixed.tiff'
 pattern = '*.h5'
 # ================================================
 
+root = os.getcwd()
+os.chdir(folder)
 filelist = glob.glob(pattern)
+os.chdir(root)
 
 flat_good = dxchange.read_tiff(source_file)
 
 for fname in filelist:
     print(fname)
+    fname = os.path.join(folder, fname)
     f = h5py.File(fname)
     dset = f['exchange/data_white']
     if dset.shape[0] < flat_good.shape[0]:
