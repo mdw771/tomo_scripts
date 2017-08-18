@@ -17,6 +17,7 @@ row_end = 16
 half_range = 5
 x_shift = 1674
 y_shift = 842
+source_folder = 'data_raw_1x'
 # ===========================================
 
 def save_checkpoint(shift_grid, row, tile_covered, center, sino):
@@ -39,12 +40,14 @@ size = comm.Get_size()
 name = MPI.Get_processor_name()
 
 prefix = 'WholeBrainMRI_phase35cm_5x_2k_gap31_exp30_newfocus'
-file_list = tomosaic.get_files('data_raw_1x', prefix, type='h5')
+file_list = tomosaic.get_files(source_folder, prefix, type='h5')
 file_grid = tomosaic.start_file_grid(file_list, pattern=1)
-
-root = os.getcwd()
-os.chdir('data_raw_1x')
-shift_grid = tomosaic.start_shift_grid(file_grid, x_shift, y_shift)
+# try read shifts
+try:
+    shift_grid = tomosaic.util.file2grid("shifts.txt")
+    shift_grid = tomosaic.absolute_shift_grid(shift_grid, file_grid)
+except:
+    shift_grid = tomosaic.start_shift_grid(file_grid, x_shift, y_shift)
 
 # try loading checkpoint
 try:
@@ -68,7 +71,7 @@ for row in range(row_st, row_end):
 
     print('At row: {}'.format(row))
     shift_old = shift_grid[row, :, :]
-    axis_tile_shift = shift_old[tile_with_axis]
+    axis_tile_shift = shift_old[tile_with_axis][1]
     i_slice = int(shift_grid[row, 0, 0] + y_shift / 2)
     # read in proper sinograms
     pix_shift_grid = np.ceil(shift_grid)
@@ -91,39 +94,43 @@ for row in range(row_st, row_end):
     sinos = [None] * file_grid.shape[1]
     for col in range(file_grid.shape[1]):
         try:
-            sinos[col] = load_sino(file_grid[grid_lines[col], col], slice_in_tile[col], normalize=True)
+            sinos[col] = load_sino(os.path.join(source_folder, file_grid[grid_lines[col], col]), slice_in_tile[col], normalize=True)
         except:
             pass
     if buffer is None:
         buffer = sinos[tile_with_axis]
 
     for col in tile_list:
+        print('Row: {} Col: {}'.format(row, col))
         if tile_covered[col]:
             continue
         sino = sinos[col]
-        current_shift = shift_old[row, 1]
+        current_shift = shift_old[col, 1]
         for offset in range(-half_range, half_range):
+            print('    Offset: {}'.format(offset))
+            temp_buffer = np.copy(buffer)
             new_shift = current_shift + offset
             relative_shift = new_shift - axis_tile_shift
             if relative_shift < 0:
-                sino = blend(sino, buffer, [0, -relative_shift], method='pyramid')
+                print(sino.shape, temp_buffer.shape, -relative_shift)
+                temp_buffer = blend(sino, temp_buffer, [0, -relative_shift], method='pyramid')
                 center_pos -= relative_shift
             else:
-                sino = blend(buffer, sino, [0, relative_shift], method='pyramid')
-            sino_feed = np.exp(-sino)
+                temp_buffer = blend(temp_buffer, sino, [0, relative_shift], method='pyramid')
+            sino_feed = np.exp(-temp_buffer)
             sino_feed = tomopy.normalize_bg(sino_feed[:, np.newaxis, :])
             sino_feed = tomopy.minus_log(sino_feed)
             rec = tomopy.recon(sino_feed, tomopy.angles(sino_feed.shape[0]), algorithm='gridrec', center=center_pos)
-            dxchange.write_tiff('bf_shift/{}/{}/{}'.format(row, col, offset), dtype='float32', overwrite=True)
+            dxchange.write_tiff(rec, 'bf_shift/{}/{}/{}'.format(row, col, offset), dtype='float32', overwrite=True)
         best_offset = raw_input('Examine shifts now and enter the best offset value:\n')
-        new_shift = shift_old[row, 1] + best_offset
+        new_shift = shift_old[row, 1, 1] + best_offset
         shift_grid[row, col, 1] = new_shift
         relative_shift = new_shift - axis_tile_shift
         if relative_shift < 0:
-            sino = blend(sino, buffer, [0, -relative_shift], method='pyramid')
+            buffer = blend(sino, buffer, [0, -relative_shift], method='pyramid')
             center_pos -= relative_shift
         else:
-            sino = blend(buffer, sino, [0, relative_shift], method='pyramid')
+            buffer = blend(buffer, sino, [0, relative_shift], method='pyramid')
         tile_covered[col] = True
-        save_checkpoint(shift_grid, row, tile_covered, center_pos, sino)
+        save_checkpoint(shift_grid, row, tile_covered, center_pos, buffer)
         print('Checkpoint saved.')
