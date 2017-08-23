@@ -8,7 +8,10 @@ file_grid = tomosaic.start_file_grid(file_list, pattern=1)
 x_shift = 1674
 y_shift = 842
 
-os.makedirs('tomosaic_misc')
+try:
+    os.mkdir('tomosaic_misc')
+except:
+    pass
 writer = open(os.path.join('tomosaic_misc', 'meta'), 'wb')
 pickle.dump([prefix, file_grid, x_shift, y_shift], writer)
 writer.close()
