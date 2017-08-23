@@ -3,7 +3,12 @@ import tomopy
 import glob, os
 import numpy as np
 import dxchange
-from mosaic_meta import *
+try:
+    from mosaic_meta import *
+except:
+    reader = open(os.path.join('tomosaic_misc', 'meta'), 'rb')
+    prefix, file_grid, x_shift, y_shift = pickle.load(reader)
+    reader.close()
 from mosaic_util import *
 
 # ==========================================

@@ -1,7 +1,12 @@
 import tomosaic
 import glob, os
 import numpy as np
-from mosaic_meta import *
+try:
+    from mosaic_meta import *
+except:
+    reader = open(os.path.join('tomosaic_misc', 'meta'), 'rb')
+    prefix, file_grid, x_shift, y_shift = pickle.load(reader)
+    reader.close()
 import time
 from mpi4py import MPI
 

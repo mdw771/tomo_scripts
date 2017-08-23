@@ -3,14 +3,18 @@ import glob
 import os
 import numpy as np
 from mpi4py import MPI
-from mosaic_meta import *
+try:
+    from mosaic_meta import *
+except:
+    reader = open(os.path.join('tomosaic_misc', 'meta'), 'rb')
+    prefix, file_grid, x_shift, y_shift = pickle.load(reader)
+    reader.close()
 
 comm = MPI.COMM_WORLD
 rank = comm.Get_rank()
 size = comm.Get_size()
 name = MPI.Get_processor_name()
 
-print file_grid
 root = os.getcwd()
 os.chdir('data_raw_1x')
 shift_grid = tomosaic.start_shift_grid(file_grid, x_shift, y_shift)
