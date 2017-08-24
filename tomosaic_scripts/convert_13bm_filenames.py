@@ -9,7 +9,7 @@ suffix_main = '_2.nc' # use suffix of main data file
 suffix_flat1 = '_1.nc'
 suffix_flat2 = '_3.nc'
 suffix_setup = '_.setup'
-n_col = 6
+n_col = 5
 flip = True
 # ====================================
 
@@ -19,7 +19,7 @@ flip = True
 filelist = glob.glob(prefix + '*' + suffix_main)
 print filelist
 for f in filelist:
-    index = int(re.findall((prefix + '(\d)' + suffix_main), f)[0])
+    index = int(re.findall((prefix + '(\d)' + suffix_main), f)[0]) - 1
     y = int(index / n_col)
     x = index % int(n_col)
     if flip:
@@ -32,7 +32,7 @@ for f in filelist:
 filelist = glob.glob(prefix + '*' + suffix_flat1)
 print filelist
 for f in filelist:
-    index = int(re.findall((prefix + '(\d)' + suffix_flat1), f)[0])
+    index = int(re.findall((prefix + '(\d)' + suffix_flat1), f)[0]) - 1
     y = int(index / n_col)
     x = index % int(n_col)
     if flip:
@@ -45,7 +45,7 @@ for f in filelist:
 filelist = glob.glob(prefix + '*' + suffix_flat2)
 print filelist
 for f in filelist:
-    index = int(re.findall((prefix + '(\d)' + suffix_flat2), f)[0])
+    index = int(re.findall((prefix + '(\d)' + suffix_flat2), f)[0]) - 1
     y = int(index / n_col)
     x = index % int(n_col)
     if flip:
@@ -58,7 +58,7 @@ for f in filelist:
 filelist = glob.glob(prefix + '*' + suffix_setup)
 print filelist
 for f in filelist:
-    index = int(re.findall((prefix + '(\d)' + suffix_setup), f)[0])
+    index = int(re.findall((prefix + '(\d)' + suffix_setup), f)[0]) - 1
     y = int(index / n_col)
     x = index % int(n_col)
     if flip:
