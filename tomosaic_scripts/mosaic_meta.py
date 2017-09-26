@@ -5,6 +5,7 @@ import os
 prefix = 'WholeBrainMRI_phase35cm_5x_2k_gap31_exp30_newfocus'
 file_list = tomosaic.get_files('data_raw_1x', prefix, type='h5')
 file_grid = tomosaic.start_file_grid(file_list, pattern=1)
+data_format = 'aps_32id'
 x_shift = 1674
 y_shift = 842
 

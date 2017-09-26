@@ -48,7 +48,9 @@ if mode == 'merged':
                               slice_step, shift_grid, center_vec=center_vec, chunk_size=chunk_size,
                               dtype='float32', save_sino=False)
 elif mode == 'discrete':
-    tomosaic.recon_block(file_grid, shift_grid, source_folder, dest_folder, (slice_st, slice_end), 1, center_vec, algorithm='gridrec', test_mode=False, ds_level=0, save_sino=True, blend_method='pyramid')
+    tomosaic.recon_block(file_grid, shift_grid, source_folder, dest_folder, (slice_st, slice_end), 1,
+                         center_vec, algorithm='gridrec', test_mode=False, ds_level=0, save_sino=True,
+                         blend_method='pyramid', data_format=data_format)
 elif mode == 'single':
     sino = dxchange.read_tiff(sino_name)
     sino = sino.reshape([sino.shape[0], 1, sino.shape[1]]) 
