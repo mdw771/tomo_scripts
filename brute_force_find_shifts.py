@@ -64,8 +64,9 @@ except:
 tile_list = []
 i = 1
 while len(tile_list) < file_grid.shape[1]:
-    tile_list.append(tile_with_axis - i)
-    if len(tile_list) < file_grid.shape[1]:
+    if tile_with_axis - i >= 0:
+        tile_list.append(tile_with_axis - i)
+    if len(tile_list) < file_grid.shape[1] and tile_with_axis + i < file_grid.shape[1]:
         tile_list.append(tile_with_axis + i)
     i += 1
 
