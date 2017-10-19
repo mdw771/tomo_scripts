@@ -5,8 +5,8 @@ import glob
 import os
 
 # ================================================
-folder = 'data_raw_1x'
-source_file = 'flat_fields_tiltfixed.tiff'
+folder = '.'
+source_file = '../flat_fields_tiltfixed.tiff'
 pattern = '*.h5'
 # ================================================
 
