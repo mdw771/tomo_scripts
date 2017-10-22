@@ -304,10 +304,24 @@ def get_yz_slice(recon_folder, chunk_size=50, slice_y=1000):
 def correlate_z(recon_folder_1, recon_folder_2, chunk_size=50, slice_y=1000):
 
     print('Building slice for ' + recon_folder_1)
-    slice1 = get_yz_slice(recon_folder_1, chunk_size=chunk_size, slice_y=slice_y)
+    try:
+        slice1 = dxchange.read_tiff(os.path.join(recon_folder_1, 'yz_cs.tiff'))
+    except:
+        slice1 = get_yz_slice(recon_folder_1, chunk_size=chunk_size, slice_y=slice_y)
+        dxchange.write_tiff(slice1, 'yz_cs', dtype='float32')
+
     print('Building slice for ' + recon_folder_2)
-    slice2 = get_yz_slice(recon_folder_2, chunk_size=chunk_size, slice_y=slice_y)
+    try:
+        slice2 = dxchange.read_tiff(os.path.join(recon_folder_2, 'yz_cs.tiff'))
+    except:
+        slice2 = get_yz_slice(recon_folder_2, chunk_size=chunk_size, slice_y=slice_y)
+        dxchange.write_tiff(slice2, 'yz_cs', dtype='float32')
     print('Registering')
     shift = register_translation(slice1, slice2, down=True)
 
     return shift
+
+folder_list = glob.glob('Mari*')
+for i, folder in enumerate(folder_list):
+    if i < len(folder_list) - 1:
+        print(correlate_z(folder, folder_list[i+1]))
