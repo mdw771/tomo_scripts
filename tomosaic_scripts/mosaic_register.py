@@ -3,6 +3,7 @@ import glob
 import os
 import numpy as np
 from mpi4py import MPI
+import pickle
 import time
 try:
     from mosaic_meta import *

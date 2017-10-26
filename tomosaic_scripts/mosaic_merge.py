@@ -1,6 +1,7 @@
 import tomosaic
 import glob, os
 import numpy as np
+import pickle
 try:
     from mosaic_meta import *
 except:

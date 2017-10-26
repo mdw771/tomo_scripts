@@ -2,6 +2,7 @@ import tomosaic
 import tomopy
 import glob, os
 import numpy as np
+import pickle
 import dxchange
 try:
     from mosaic_meta import *

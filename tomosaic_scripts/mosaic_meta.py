@@ -2,6 +2,7 @@ import tomosaic
 import pickle
 import os
 from mpi4py import MPI
+import pickle
 
 prefix = 'WholeBrainMRI_phase35cm_5x_2k_gap31_exp30_newfocus'
 file_list = tomosaic.get_files('data_raw_1x', prefix, type='h5')
