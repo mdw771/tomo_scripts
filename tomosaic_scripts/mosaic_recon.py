@@ -59,3 +59,5 @@ elif mode == 'single':
     theta = tomopy.angles(sino.shape[0])
     rec = tomopy.recon(sino, theta, center=center_single, algorithm='gridrec')
     dxchange.write_tiff(rec, dest_fname, dtype='float32')
+
+print('Rank {}: total time: {} s.'.format(rank, time.time() - t0))

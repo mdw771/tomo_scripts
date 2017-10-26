@@ -26,7 +26,6 @@ dest_folder = 'center'
 slice = 1000
 # discrete:
 source_folder = 'data_raw_1x'
-data_format = 'aps_13bm'
 # merged:
 fname = 'fulldata_flatcorr_1x/fulldata_flatcorr_1x.h5'
 # single:
@@ -50,6 +49,7 @@ except:
 shift_grid = shift_grid / ds
 in_tile_pos = in_tile_pos / ds
 
+t0 = time.time()
 if mode == 'merged':
     find_center_merged(fname, shift_grid, (row_st, row_end), (center_st, center_end), center_step, slice=slice,
                        method=method)
@@ -59,3 +59,4 @@ elif mode == 'discrete':
 elif mode == 'single':
     find_center_single(sino_name, (center_st, center_end), center_step, preprocess_single=preprocess_single,
                        method=method)
+print('Rank {}: total time = {} s.'.format(rank, time.time() - t0))

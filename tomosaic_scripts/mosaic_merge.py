@@ -29,6 +29,8 @@ shift_grid = tomosaic.util.file2grid("shifts.txt")
 shift_grid = tomosaic.absolute_shift_grid(shift_grid, file_grid)
 shift_grid = shift_grid / ds
 
+t0 = time.time()
 tomosaic.util.total_fusion(source_folder, 'fulldata_flatcorr_1x', 'fulldata_flatcorr_1x.h5', file_grid,
                            shift_grid, blend_method='pyramid', blend_method2='overlay',
                            color_correction=False, blend_options=blend_options, dtype='float16')
+print('Rank {}: total time: {} s.'.format(rank, time.time() - t0))
