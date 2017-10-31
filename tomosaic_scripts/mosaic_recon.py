@@ -18,7 +18,6 @@ slice_st =  0
 slice_end = 13781
 slice_step = 1
 mode = 'merged'
-center_vec = np.array([5952, 5954, 5960, 5967, 5975, 5976, 5986, 5991, 5994, 5996, 6003, 6001, 6007, 6012, 6021, 6027])
 dest_folder = 'recon_flatcorr_1x'
 ds = 1
 chunk_size = 5
@@ -38,6 +37,8 @@ try:
     shift_grid = tomosaic.absolute_shift_grid(shift_grid, file_grid)
 except:
     shift_grid = tomosaic.start_shift_grid(file_grid, x_shift, y_shift)
+
+center_vec = tomosaic.read_center_pos('center_pos.txt')
 
 shift_grid = shift_grid / float(ds)
 center_vec = center_vec / float(ds)
