@@ -5,6 +5,7 @@ import glob, os
 import numpy as np
 from mosaic_meta import *
 import dxchange
+import tomopy
 
 # ==========================================
 frame = 0
@@ -33,7 +34,7 @@ last_none = False
 buff = np.zeros([1, 1])
 for (y, x), value in np.ndenumerate(file_grid):
     if value != None:
-        prj, flt, drk = read_data_adaptive(value, proj=(frame, frame + 1))
+        prj, flt, drk, _ = read_data_adaptive(value, proj=(frame, frame + 1))
         prj = tomopy.normalize(prj, flt, drk)
         prj = preprocess(np.copy(prj))
         buff = blend(buff, np.squeeze(prj), shift_grid[y, x, :], method=method)
