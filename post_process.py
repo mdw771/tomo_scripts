@@ -17,18 +17,18 @@ except:
 # ==============================
 angle = 0
 crop = None # (x_start, y_start, x_length, y_length; same as ImageJ convention)
-min = 0
-max = 0.0008
+min = -0.0005
+max = 0.0011
 bitdepth = 8
 saturation = 35
 mean_filter = None # radius
 mean3d_x = 1 # window full size
 mean3d_y = 1
-mean3d_z = 5
+mean3d_z = 1
 ds_factor = 1
 chunk_size = 30
-src_folder = 'test_data/stack'
-dest_folder = 'test_data/stack_processed'
+src_folder = 'recon_flatcorr_4x/recon'
+dest_folder = 'recon_flatcorr_4x/recon_crop_8'
 # ==============================
 
 def barrier():
@@ -188,8 +188,8 @@ if len(filelist) > 0:
 # second pass to fix mean3d borders
 
 barrier()
-print('Second pass...', rank)
 if mean3d_x is not None:
+    print('Second pass...', rank)
     border_saver = open(os.path.join(dest_folder, 'borders'), 'r')
     border_files = pickle.load(border_saver)
     # remove adjacent redundancies
@@ -213,15 +213,15 @@ if mean3d_x is not None:
         img = []
         border_ind = np.searchsorted(filelist, border_slice)
         if border_ind-rad >= 0:
-            subset = filelist[border_ind-rad:border_ind+rad+1]
+            subset = filelist[border_ind-rad*2:border_ind+rad*2+1]
         else:
-            subset = filelist[0:border_ind+rad+1]
+            subset = filelist[0:border_ind+rad*2+1]
         for fname in subset:
             print(fname, '2nd, {}'.format(rank))
-            slice = dxchange.read_tiff(os.path.join(src_folder, fname))
+            slice = dxchange.read_tiff(os.path.join(dest_folder, fname))
             img.append(slice)
         img = np.asarray(img)
         img = mean3d(img)
 
-        for slice, fname in izip(img, subset):
+        for slice, fname in izip(img[rad:-rad], subset[rad:-rad]):
             dxchange.write_tiff(slice, os.path.join(dest_folder, fname), dtype='uint{:d}'.format(bitdepth), overwrite=True)

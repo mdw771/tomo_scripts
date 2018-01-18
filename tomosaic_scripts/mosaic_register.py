@@ -13,7 +13,7 @@ except:
     reader.close()
 
 # =============================================
-method = 'reslice'
+method = 'pc'
 src_folder = 'data_raw_1x'
 # =============================================
 

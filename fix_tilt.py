@@ -58,7 +58,7 @@ grp = f.create_group('exchange')
 f_data = grp.create_dataset('data', o_data.shape, dtype=np.uint16)
 f_flat = grp.create_dataset('data_white', o_flat.shape, dtype=np.uint16)
 f_dark = grp.create_dataset('data_dark', o_data.shape, dtype=np.uint16)
-f_theta = grp.create_dataset('theta', o_data.shape, dtype=np.uint16)
+f_theta = grp.create_dataset('theta', o_theta.shape, dtype=np.uint16)
 comm.Barrier()
 
 write_data(f_data, o_data)
